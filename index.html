@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>FF Bone Editor v5 - Đức Thịnh VN</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,sans-serif; -webkit-tap-highlight-color:transparent; }
+body { background:#0a0a0a; color:#00ff00; min-height:100vh; padding:10px; }
+.container { max-width:1300px; margin:0 auto; background:#111; border:2px solid #00ff00; border-radius:10px; padding:15px; box-shadow:0 0 20px rgba(0,255,0,0.3); }
+h1 { text-align:center; color:#00ff00; margin-bottom:6px; font-size:18px; text-shadow:0 0 10px #00ff00; }
+.subtitle { text-align:center; color:#888; margin-bottom:15px; font-size:11px; }
+.badge { display:inline-block; background:#ff4500; color:#fff; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:bold; }
+.badge2 { display:inline-block; background:#ff00ff; color:#fff; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:bold; }
+.badge3 { display:inline-block; background:#00ffff; color:#000; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:bold; }
+.badge4 { display:inline-block; background:#ffaa00; color:#000; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:bold; }
+
+.drop-zone { border:2px dashed #00ff00; border-radius:10px; padding:20px; text-align:center; background:#1a1a1a; transition:0.3s; margin-bottom:10px; cursor:pointer; }
+.drop-zone.dragover { background:#0d2f0d; border-color:#00ffff; box-shadow:0 0 25px rgba(0,255,255,0.5); }
+.drop-zone.has-file { border-style:solid; background:#0d1f0d; }
+.drop-zone h2 { color:#00ff00; font-size:14px; margin-bottom:6px; }
+.drop-zone p { color:#888; font-size:10px; }
+
+.btn-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px; margin-bottom:8px; }
+.btn-row2 { display:grid; grid-template-columns:2fr 1fr 1fr; gap:5px; margin-bottom:8px; }
+.btn-row3 { display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-bottom:8px; }
+.btn { padding:12px 8px; background:#1a1a1a; color:#00ff00; border:1px solid #00ff00; border-radius:6px; font-size:12px; font-weight:bold; cursor:pointer; transition:0.3s; -webkit-appearance:none; }
+.btn:hover, .btn:active { background:#00ff00; color:#000; }
+.btn.primary { background:#00ff00; color:#000; }
+.btn.primary:hover, .btn.primary:active { background:#00cc00; box-shadow:0 0 15px rgba(0,255,0,0.5); }
+.btn.danger { background:#ff0000; color:#fff; border-color:#ff0000; }
+.btn.danger:hover, .btn.danger:active { background:#cc0000; }
+.btn.save { background:#00aaff; color:#000; border-color:#00aaff; }
+.btn.save:hover, .btn.save:active { background:#0088cc; }
+.btn.zip { background:#ff00ff; color:#fff; border-color:#ff00ff; }
+.btn.zip:hover, .btn.zip:active { background:#cc00cc; }
+.btn.plist { background:#ffaa00; color:#000; border-color:#ffaa00; }
+.btn.plist:hover, .btn.plist:active { background:#cc8800; }
+.btn.mobile { background:#00ffaa; color:#000; border-color:#00ffaa; }
+.btn.mobile:hover, .btn.mobile:active { background:#00cc88; }
+.btn:disabled { background:#333; color:#666; border-color:#333; cursor:not-allowed; }
+
+input[type="file"] { display:none; }
+
+.file-list { background:#0a0a0a; border:1px solid #00ff00; border-radius:8px; padding:10px; max-height:150px; overflow-y:auto; margin-bottom:8px; font-size:10px; font-family:'Courier New',monospace; display:none; }
+.file-list.active { display:block; }
+.file-list .file-item { padding:3px 6px; border-bottom:1px solid #1a1a1a; color:#00cc00; display:flex; justify-content:space-between; gap:6px; }
+.file-list .file-item:last-child { border-bottom:none; }
+.file-list .file-item .size { color:#888; white-space:nowrap; }
+.file-list .file-item .ext { color:#ffaa00; }
+.file-list .file-item .name { word-break:break-all; }
+
+.stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(95px,1fr)); gap:5px; margin-bottom:8px; display:none; }
+.stats.active { display:grid; }
+.stat-box { background:#1a1a1a; border:1px solid #00ff00; border-radius:6px; padding:8px; text-align:center; }
+.stat-box .value { font-size:16px; font-weight:bold; color:#00ff00; }
+.stat-box .label { font-size:9px; color:#888; margin-top:2px; }
+
+.panel { background:#0a1a0a; border:1px solid #00ffff; border-radius:8px; padding:10px; margin-bottom:8px; display:none; }
+.panel.active { display:block; }
+.panel.plist-panel { background:#1a1a0a; border-color:#ffaa00; }
+.panel-title { color:#00ffff; font-size:12px; font-weight:bold; margin-bottom:8px; border-bottom:1px solid #00ffff; padding-bottom:5px; }
+.panel.plist-panel .panel-title { color:#ffaa00; border-color:#ffaa00; }
+
+.ghim-row { display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-bottom:8px; }
+.ghim-btn { padding:10px 8px; background:#1a1a1a; color:#00ff00; border:2px solid #00ff00; border-radius:6px; cursor:pointer; font-size:11px; font-weight:bold; transition:0.3s; -webkit-appearance:none; }
+.ghim-btn:hover, .ghim-btn:active { background:#00cc00; color:#000; }
+.ghim-btn.active { background:#ff00ff; color:#fff; border-color:#ff00ff; box-shadow:0 0 15px #ff00ff; }
+
+.input-row { display:grid; grid-template-columns:1fr; gap:5px; margin-bottom:8px; }
+.input-row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px; margin-bottom:8px; }
+.input-row-2 { display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-bottom:8px; }
+.input-group { display:flex; flex-direction:column; }
+.input-group label { color:#00ff00; font-size:10px; margin-bottom:3px; }
+.input-group input, .input-group select { background:#000; color:#00ff00; border:1px solid #00ff00; border-radius:4px; padding:9px; font-family:'Courier New',monospace; font-size:12px; -webkit-appearance:none; width:100%; }
+.input-group input:focus, .input-group select:focus { outline:none; border-color:#00ffff; box-shadow:0 0 8px #00ffff; }
+
+.tabs { display:flex; gap:3px; margin-bottom:8px; flex-wrap:wrap; display:none; }
+.tabs.active { display:flex; }
+.tab { flex:1; padding:7px 5px; background:#1a1a1a; color:#00ff00; border:1px solid #00ff00; border-radius:6px; cursor:pointer; font-size:10px; font-weight:bold; transition:0.3s; min-width:65px; -webkit-appearance:none; }
+.tab.active { background:#00ff00; color:#000; }
+.tab:hover, .tab:active { background:#00cc00; color:#000; }
+
+.output { background:#000; border:1px solid #00ff00; border-radius:8px; padding:12px; min-height:300px; max-height:60vh; overflow-y:auto; font-family:'Courier New',monospace; font-size:11px; white-space:pre-wrap; word-break:break-word; display:none; line-height:1.5; -webkit-overflow-scrolling:touch; }
+.output.active { display:block; }
+.output .success { color:#00ff00; }
+.output .warning { color:#ffaa00; }
+.output .error { color:#ff0000; }
+.output .info { color:#00aaff; }
+.output .ff { color:#ff4500; font-weight:bold; }
+.output .bone { color:#ff00ff; font-weight:bold; }
+.output .line-num { color:#ffff00; }
+.output .old-val { color:#ff6666; }
+.output .new-val { color:#66ff66; font-weight:bold; }
+.output .header { color:#00ffff; font-weight:bold; }
+.output .hex { color:#ff00ff; }
+.output .str { color:#00ffaa; }
+.output .ghim { color:#ff00ff; font-weight:bold; }
+.output .save { color:#00aaff; font-weight:bold; }
+.output .plist { color:#ffaa00; font-weight:bold; }
+::-webkit-scrollbar { width:6px; height:6px; }
+::-webkit-scrollbar-track { background:#111; }
+::-webkit-scrollbar-thumb { background:#00ff00; border-radius:4px; }
+
+.toast {
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(100px);
+    background:#00ff00; color:#000; padding:12px 20px; border-radius:8px;
+    font-weight:bold; font-size:13px; z-index:9999; transition:0.3s;
+    box-shadow:0 0 20px rgba(0,255,0,0.7); opacity:0; pointer-events:none;
+    max-width:90vw; text-align:center;
+}
+.toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+.toast.error { background:#ff0000; color:#fff; box-shadow:0 0 20px rgba(255,0,0,0.7); }
+.toast.save { background:#00aaff; color:#000; box-shadow:0 0 20px rgba(0,170,255,0.7); }
+.toast.plist { background:#ffaa00; color:#000; box-shadow:0 0 20px rgba(255,170,0,0.7); }
+
+@media (max-width:600px) {
+    body { padding:5px; }
+    .container { padding:10px; border-radius:8px; }
+    h1 { font-size:15px; }
+    .subtitle { font-size:10px; }
+    .btn { font-size:11px; padding:10px 6px; }
+    .tab { font-size:9px; padding:6px 4px; min-width:55px; }
+    .stat-box .value { font-size:14px; }
+    .stat-box .label { font-size:8px; }
+    .output { font-size:10px; padding:10px; }
+    .ghim-btn { font-size:10px; padding:9px 6px; }
+    .input-row-3 { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>FF BONE EDITOR <span class="badge">FF</span> <span class="badge2">BONE</span> <span class="badge3">v5</span> <span class="badge4">PLIST</span></h1>
+    <p class="subtitle">Check + Ghim + Sửa + Lưu + Tạo PLIST/MOBILECONFIG | Đức Thịnh VN</p>
+
+    <div class="drop-zone" id="dropZone">
+        <h2>📁 KÉO THẢ FILE VÀO ĐÂY</h2>
+        <p>Hỗ trợ: cache_res.*, *.dat, *.so, *.dll, *.bin, *.txt, *.json, *.cs</p>
+    </div>
+
+    <div class="btn-row">
+        <button class="btn primary" id="btnFiles">CHỌN FILE</button>
+        <button class="btn" id="btnFolder">CHỌN THƯ MỤC</button>
+        <button class="btn" id="btnAll">CHỌN FULL</button>
+    </div>
+
+    <input type="file" id="fileInput" multiple>
+    <input type="file" id="folderInput" webkitdirectory directory multiple>
+
+    <div class="file-list" id="fileList"></div>
+
+    <div class="btn-row2">
+        <button class="btn primary" id="checkBtn" disabled>CHECK KHUNG XƯƠNG</button>
+        <button class="btn danger" id="clearBtn">XÓA HẾT</button>
+        <button class="btn save" id="saveBtn" disabled>💾 LƯU FILE</button>
+    </div>
+
+    <div class="stats" id="stats">
+        <div class="stat-box"><div class="value" id="totalFiles">0</div><div class="label">Tổng file</div></div>
+        <div class="stat-box"><div class="value" id="totalBones">0</div><div class="label">Tổng bone</div></div>
+        <div class="stat-box"><div class="value" id="totalOffset">0</div><div class="label">Tổng offset</div></div>
+        <div class="stat-box"><div class="value" id="headCount">0</div><div class="label">HEAD</div></div>
+        <div class="stat-box"><div class="value" id="neckCount">0</div><div class="label">NECK</div></div>
+        <div class="stat-box"><div class="value" id="editedCount">0</div><div class="label">Đã sửa</div></div>
+    </div>
+
+    <!-- PANEL GHIM -->
+    <div class="panel" id="ghimPanel">
+        <div class="panel-title">▶ CHỌN TÂM GHIM MỤC TIÊU</div>
+        <div class="ghim-row">
+            <button class="ghim-btn" data-ghim="head">🎯 GHIM ĐẦU</button>
+            <button class="ghim-btn active" data-ghim="neck">🎯 GHIM CỔ</button>
+            <button class="ghim-btn" data-ghim="chest">🎯 GHIM NGỰC</button>
+            <button class="ghim-btn" data-ghim="body">🎯 GHIM BODY</button>
+        </div>
+        <div class="panel-title">▶ TỌA ĐỘ GHIM (X, Y, Z)</div>
+        <div class="input-row-3">
+            <div class="input-group"><label>TỌA ĐỘ X</label><input type="text" id="ghimX" value="0.0"></div>
+            <div class="input-group"><label>TỌA ĐỘ Y</label><input type="text" id="ghimY" value="1.50"></div>
+            <div class="input-group"><label>TỌA ĐỘ Z</label><input type="text" id="ghimZ" value="0.0"></div>
+        </div>
+        <div class="input-row">
+            <div class="input-group"><label>OFFSET HEX CẦN SỬA</label><input type="text" id="ghimOffset" placeholder="0x1A2B3C"></div>
+            <div class="input-group"><label>GIÁ TRỊ MỚI (HEX)</label><input type="text" id="ghimValueHex" value="00 00 C0 3F"></div>
+            <div class="input-group"><label>GHI CHÚ</label><input type="text" id="ghimNote" value="Ghim cổ"></div>
+        </div>
+        <button class="btn primary" id="applyGhimBtn" style="width:100%;">⚡ ÁP DỤNG VÀO FILE</button>
+    </div>
+
+    <!-- PANEL PLIST / MOBILECONFIG -->
+    <div class="panel plist-panel" id="plistPanel">
+        <div class="panel-title">▶ TẠO FILE PLIST / MOBILECONFIG CHO FREE FIRE</div>
+        <div class="input-row">
+            <div class="input-group"><label>TÊN PROFILE</label><input type="text" id="plistName" value="FF Config Đức Thịnh VN"></div>
+        </div>
+        <div class="input-row">
+            <div class="input-group"><label>BUNDLE ID FREE FIRE</label><input type="text" id="plistBundle" value="com.dts.freefireth"></div>
+        </div>
+        <div class="input-row">
+            <div class="input-group"><label>LOẠI FILE</label>
+                <select id="plistType">
+                    <option value="mobileconfig">Mobileconfig (iOS)</option>
+                    <option value="plist">Plist (Android/iOS)</option>
+                    <option value="both">Cả hai</option>
+                </select>
+            </div>
+        </div>
+        <div class="panel-title">▶ CẤU HÌNH AIM</div>
+        <div class="ghim-row">
+            <button class="plist-ghim active" data-ghim="neck">🎯 GHIM CỔ</button>
+            <button class="plist-ghim" data-ghim="head">🎯 GHIM ĐẦU</button>
+            <button class="plist-ghim" data-ghim="chest">🎯 GHIM NGỰC</button>
+            <button class="plist-ghim" data-ghim="body">🎯 GHIM BODY</button>
+        </div>
+        <div class="input-row-3">
+            <div class="input-group"><label>MỨC AIM</label>
+                <select id="plistAimLv">
+                    <option value="low">Thấp (nhẹ tâm)</option>
+                    <option value="medium" selected>Trung bình</option>
+                    <option value="high">Cao (aim mạnh)</option>
+                    <option value="max">Tối đa</option>
+                </select>
+            </div>
+            <div class="input-group"><label>GHIM OFFSET</label>
+                <select id="plistGhimOffset">
+                    <option value="auto" selected>Tự động theo tâm ghim</option>
+                    <option value="custom">Tùy chỉnh</option>
+                </select>
+            </div>
+            <div class="input-group"><label>DRAG SPEED</label><input type="text" id="plistDrag" value="1.0"></div>
+        </div>
+        <div class="input-row-2">
+            <div class="input-group"><label>SMOOTH</label><input type="text" id="plistSmooth" value="0.8"></div>
+            <div class="input-group"><label>FOV</label><input type="text" id="plistFov" value="120"></div>
+        </div>
+        <div class="btn-row3">
+            <button class="btn plist" id="genPlistBtn">📄 TẠO PLIST</button>
+            <button class="btn mobile" id="genMobileBtn">📱 TẠO MOBILECONFIG</button>
+        </div>
+        <div class="btn-row3">
+            <button class="btn plist" id="genBothBtn">📦 TẠO CẢ 2</button>
+            <button class="btn mobile" id="installProfileBtn">⚡ HƯỚNG DẪN CÀI</button>
+        </div>
+    </div>
+
+    <div class="tabs" id="tabs">
+        <button class="tab active" data-tab="alloffset">ALL OFFSET</button>
+        <button class="tab" data-tab="ghim">TÂM GHIM</button>
+        <button class="tab" data-tab="plist">PLIST/MOBILE</button>
+        <button class="tab" data-tab="head">HEAD</button>
+        <button class="tab" data-tab="neck">NECK</button>
+        <button class="tab" data-tab="chest">CHEST</button>
+        <button class="tab" data-tab="spine">SPINE</button>
+        <button class="tab" data-tab="hip">HIP</button>
+        <button class="tab" data-tab="arm">ARM</button>
+        <button class="tab" data-tab="leg">LEG</button>
+        <button class="tab" data-tab="hand">HAND</button>
+        <button class="tab" data-tab="foot">FOOT</button>
+        <button class="tab" data-tab="edited">ĐÃ SỬA</button>
+    </div>
+
+    <div class="output" id="output"></div>
+
+    <div class="btn-row3" id="saveRow" style="display:none; margin-top:10px;">
+        <button class="btn save" id="saveAllBtn">💾 LƯU TẤT CẢ</button>
+        <button class="btn zip" id="zipAllBtn">📦 TẢI ZIP</button>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const dropZone = document.getElementById('dropZone');
+const btnFiles = document.getElementById('btnFiles');
+const btnFolder = document.getElementById('btnFolder');
+const btnAll = document.getElementById('btnAll');
+const fileInput = document.getElementById('fileInput');
+const folderInput = document.getElementById('folderInput');
+const fileList = document.getElementById('fileList');
+const checkBtn = document.getElementById('checkBtn');
+const clearBtn = document.getElementById('clearBtn');
+const saveBtn = document.getElementById('saveBtn');
+const output = document.getElementById('output');
+const stats = document.getElementById('stats');
+const tabs = document.getElementById('tabs');
+const ghimPanel = document.getElementById('ghimPanel');
+const plistPanel = document.getElementById('plistPanel');
+const saveRow = document.getElementById('saveRow');
+const toastEl = document.getElementById('toast');
+
+let selectedFiles = [];
+let currentTab = 'alloffset';
+let currentGhim = 'neck';
+let currentPlistGhim = 'neck';
+let allData = null;
+let editedFiles = {};
+
+const MAX_READ_BYTES = 20 * 1024 * 1024;
+const MIN_STRING_LEN = 3;
+const MAX_STRINGS = 50000;
+
+// ===== BONE KEYWORDS =====
+const boneKeywords = {
+    head:  ['head','HeadBone','Bip01_Head','bone_head','head_bone','headbone','Head_','_head','HEAD'],
+    neck:  ['neck','NeckBone','Bip01_Neck','bone_neck','neck_bone','neckbone','Neck_','_neck','NECK'],
+    chest: ['chest','ChestBone','Bip01_Spine1','Spine1','bone_chest','Chest_','_chest','CHEST','spine1'],
+    spine: ['spine','SpineBone','Bip01_Spine','bone_spine','spinebone','Spine_','_spine','SPINE','spine2'],
+    hip:   ['hip','HipBone','pelvis','Pelvis','Bip01_Pelvis','bone_hip','Hip_','_hip','HIP'],
+    arm:   ['arm','ArmBone','UpperArm','LowerArm','Bip01_L_UpperArm','Bip01_R_UpperArm','bone_arm','Arm_','_arm','ARM','forearm'],
+    leg:   ['leg','LegBone','Thigh','Calf','Bip01_L_Thigh','Bip01_R_Thigh','bone_leg','Leg_','_leg','LEG','thigh','calf'],
+    hand:  ['hand','HandBone','Bip01_L_Hand','Bip01_R_Hand','bone_hand','Hand_','_hand','HAND','palm'],
+    foot:  ['foot','FootBone','Bip01_L_Foot','Bip01_R_Foot','bone_foot','Foot_','_foot','FOOT','ankle']
+};
+
+const ghimPresets = {
+    head:  { x:'0.0', y:'1.65', z:'0.0', hex:'00 00 D4 3F', desc:'Ghim đầu - headshot' },
+    neck:  { x:'0.0', y:'1.50', z:'0.0', hex:'00 00 C0 3F', desc:'Ghim cổ - neck aim' },
+    chest: { x:'0.0', y:'1.30', z:'0.0', hex:'66 66 A6 3F', desc:'Ghim ngực - chest aim' },
+    body:  { x:'0.0', y:'1.10', z:'0.0', hex:'CD CC 8C 3F', desc:'Ghim body - body aim' }
+};
+
+// Giá trị aim theo mức
+const aimLevels = {
+    low:    { aimSpeed:'0.3', smooth:'0.3', fov:'90',  drag:'0.5', recoil:'0.2' },
+    medium: { aimSpeed:'0.6', smooth:'0.6', fov:'120', drag:'1.0', recoil:'0.5' },
+    high:   { aimSpeed:'0.9', smooth:'0.9', fov:'160', drag:'1.5', recoil:'0.7' },
+    max:    { aimSpeed:'1.0', smooth:'1.0', fov:'180', drag:'2.0', recoil:'1.0' }
+};
+
+// ===== TOAST =====
+function showToast(msg, type='') {
+    toastEl.textContent = msg;
+    toastEl.className = 'toast show ' + type;
+    setTimeout(() => { toastEl.classList.remove('show'); }, 3000);
+}
+
+// ===== CHỌN FILE =====
+btnFiles.addEventListener('click', () => fileInput.click());
+btnFolder.addEventListener('click', () => folderInput.click());
+btnAll.addEventListener('click', () => {
+    fileInput.click();
+    fileInput.onchange = (e) => {
+        addFiles(Array.from(e.target.files));
+        setTimeout(() => folderInput.click(), 300);
+    };
+    folderInput.onchange = (e) => {
+        addFiles(Array.from(e.target.files));
+        folderInput.onchange = null;
+        fileInput.onchange = null;
+    };
+});
+fileInput.addEventListener('change', e => addFiles(Array.from(e.target.files)));
+folderInput.addEventListener('change', e => addFiles(Array.from(e.target.files)));
+
+['dragenter','dragover'].forEach(ev => dropZone.addEventListener(ev, e => {
+    e.preventDefault(); e.stopPropagation(); dropZone.classList.add('dragover');
+}));
+['dragleave','drop'].forEach(ev => dropZone.addEventListener(ev, e => {
+    e.preventDefault(); e.stopPropagation(); dropZone.classList.remove('dragover');
+}));
+dropZone.addEventListener('drop', async (e) => {
+    const items = e.dataTransfer.items;
+    const files = [];
+    if (items && items.length && items[0].webkitGetAsEntry) {
+        const entries = [];
+        for (let i = 0; i < items.length; i++) {
+            const entry = items[i].webkitGetAsEntry();
+            if (entry) entries.push(entry);
+        }
+        for (const entry of entries) await traverseEntry(entry, files);
+    } else {
+        files.push(...Array.from(e.dataTransfer.files));
+    }
+    addFiles(files);
+});
+
+function traverseEntry(entry, list) {
+    return new Promise(resolve => {
+        if (entry.isFile) {
+            entry.file(f => { list.push(f); resolve(); }, () => resolve());
+        } else if (entry.isDirectory) {
+            const reader = entry.createReader();
+            const readAll = () => {
+                reader.readEntries(async entries => {
+                    if (entries.length === 0) { resolve(); return; }
+                    for (const e of entries) await traverseEntry(e, list);
+                    readAll();
+                }, () => resolve());
+            };
+            readAll();
+        } else resolve();
+    });
+}
+
+function addFiles(files) {
+    const exist = new Set(selectedFiles.map(f => f.name + '_' + f.size));
+    files.forEach(f => {
+        const k = f.name + '_' + f.size;
+        if (!exist.has(k)) { selectedFiles.push(f); exist.add(k); }
+    });
+    renderFileList();
+}
+
+function renderFileList() {
+    if (selectedFiles.length === 0) {
+        fileList.classList.remove('active');
+        dropZone.classList.remove('has-file');
+        checkBtn.disabled = true;
+        return;
+    }
+    fileList.classList.add('active');
+    dropZone.classList.add('has-file');
+    checkBtn.disabled = false;
+
+    const extCount = {};
+    selectedFiles.forEach(f => {
+        const ext = (f.name.split('.').pop() || 'khong-ro').toLowerCase();
+        extCount[ext] = (extCount[ext] || 0) + 1;
+    });
+    const extSummary = Object.keys(extCount).map(e => `${e}: ${extCount[e]}`).join(' | ');
+
+    fileList.innerHTML = `
+        <div style="color:#ffff00;font-weight:bold;margin-bottom:6px;">ĐÃ CHỌN: ${selectedFiles.length} file</div>
+        <div style="color:#ffaa00;margin-bottom:6px;font-size:10px;">ĐỊNH DẠNG: ${extSummary}</div>
+        ${selectedFiles.map((f,i) => {
+            const ext = (f.name.split('.').pop() || '?').toLowerCase();
+            const size = f.size > 1024*1024
+                ? (f.size/1024/1024).toFixed(2)+' MB'
+                : (f.size/1024).toFixed(1)+' KB';
+            const path = f.webkitRelativePath || f.name;
+            const edited = editedFiles[f.name] ? ' [ĐÃ SỬA]' : '';
+            return `<div class="file-item">
+                <span class="name">${i+1}. <span class="ext">[${ext}]</span> ${path}${edited}</span>
+                <span class="size">${size}</span>
+            </div>`;
+        }).join('')}
+    `;
+}
+
+clearBtn.addEventListener('click', () => {
+    if (selectedFiles.length > 0 && !confirm('Xóa toàn bộ file đã chọn và kết quả?')) return;
+    selectedFiles = [];
+    editedFiles = {};
+    fileInput.value = '';
+    folderInput.value = '';
+    renderFileList();
+    output.innerHTML = '';
+    output.classList.remove('active');
+    stats.classList.remove('active');
+    tabs.classList.remove('active');
+    ghimPanel.classList.remove('active');
+    plistPanel.classList.remove('active');
+    saveRow.style.display = 'none';
+    saveBtn.disabled = true;
+    allData = null;
+});
+
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentTab = tab.dataset.tab;
+        ghimPanel.classList.remove('active');
+        plistPanel.classList.remove('active');
+        if (currentTab === 'ghim') ghimPanel.classList.add('active');
+        if (currentTab === 'plist') plistPanel.classList.add('active');
+        if (allData) renderTab(allData);
+    });
+});
+
+document.querySelectorAll('.ghim-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.ghim-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentGhim = btn.dataset.ghim;
+        const p = ghimPresets[currentGhim];
+        document.getElementById('ghimX').value = p.x;
+        document.getElementById('ghimY').value = p.y;
+        document.getElementById('ghimZ').value = p.z;
+        document.getElementById('ghimValueHex').value = p.hex;
+        document.getElementById('ghimNote').value = p.desc;
+        showToast('Đã chọn ' + p.desc);
+    });
+});
+
+document.querySelectorAll('.plist-ghim').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.plist-ghim').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentPlistGhim = btn.dataset.ghim;
+        showToast('Plist ghim: ' + ghimPresets[currentPlistGhim].desc);
+    });
+});
+
+function log(msg, type='info') {
+    const span = document.createElement('span');
+    span.className = type;
+    span.textContent = msg + '\n';
+    output.appendChild(span);
+}
+
+function readFileAny(file, maxBytes) {
+    return new Promise((res, rej) => {
+        const r = new FileReader();
+        r.onload = e => res(new Uint8Array(e.target.result));
+        r.onerror = () => rej(new Error('Không đọc được'));
+        const blob = file.slice(0, maxBytes);
+        r.readAsArrayBuffer(blob);
+    });
+}
+
+function extractStrings(buf, minLen) {
+    const strings = [];
+    let cur = '', start = -1;
+    for (let i = 0; i < buf.length; i++) {
+        const b = buf[i];
+        if (b >= 32 && b <= 126) {
+            if (cur.length === 0) start = i;
+            cur += String.fromCharCode(b);
+        } else {
+            if (cur.length >= minLen) strings.push({ offset: start, value: cur });
+            cur = ''; start = -1;
+        }
+        if (strings.length >= MAX_STRINGS) break;
+    }
+    if (cur.length >= minLen) strings.push({ offset: start, value: cur });
+    return strings;
+}
+
+function detectBoneType(str) {
+    const lower = str.toLowerCase();
+    const found = [];
+    Object.keys(boneKeywords).forEach(type => {
+        boneKeywords[type].forEach(kw => {
+            if (lower.includes(kw.toLowerCase())) {
+                if (!found.includes(type)) found.push(type);
+            }
+        });
+    });
+    return found;
+}
+
+function extractHexOffsets(buf) {
+    const hex = [];
+    for (let i = 0; i < buf.length - 4; i++) {
+        if (buf[i] === 48 && buf[i+1] === 120) {
+            let j = i + 2, s = '';
+            while (j < buf.length && j < i + 20) {
+                const c = String.fromCharCode(buf[j]);
+                if (/[0-9a-fA-F]/.test(c)) { s += c; j++; }
+                else break;
+            }
+            if (s.length >= 4) hex.push({ offset: i, value: '0x' + s });
+        }
+    }
+    return hex;
+}
+
+function extractFloats(buf) {
+    const floats = [];
+    for (let i = 0; i < buf.length - 4; i += 4) {
+        const view = new DataView(buf.buffer, buf.byteOffset + i, 4);
+        const f = view.getFloat32(0, true);
+        if (!isNaN(f) && isFinite(f) && Math.abs(f) > 0.01 && Math.abs(f) < 100) {
+            floats.push({ offset: i, value: f });
+        }
+        if (floats.length >= 30000) break;
+    }
+    return floats;
+}
+
+async function processFiles() {
+    output.innerHTML = '';
+    output.classList.add('active');
+    stats.classList.add('active');
+    tabs.classList.add('active');
+    ghimPanel.classList.remove('active');
+    plistPanel.classList.remove('active');
+
+    const filesData = [];
+    let totalBones = 0, totalOffset = 0, headCount = 0, neckCount = 0;
+
+    log('=== BẮT ĐẦU CHECK KHUNG XƯƠNG FF v5 ===\n', 'bone');
+    log(`Tổng file: ${selectedFiles.length}`, 'info');
+
+    for (const file of selectedFiles) {
+        try {
+            const readSize = Math.min(file.size, MAX_READ_BYTES);
+            const buf = await readFileAny(file, readSize);
+
+            log(`\n[FILE] ${file.webkitRelativePath || file.name}`, 'header');
+            log(`  Đọc: ${(buf.length/1024).toFixed(1)} KB`, 'info');
+
+            const strings = extractStrings(buf, MIN_STRING_LEN);
+            const hexOffsets = extractHexOffsets(buf);
+            const floats = extractFloats(buf);
+            totalOffset += hexOffsets.length;
+
+            const boneMatches = [];
+            strings.forEach(s => {
+                const types = detectBoneType(s.value);
+                if (types.length > 0) {
+                    boneMatches.push({ offset: s.offset, value: s.value, types });
+                }
+            });
+
+            boneMatches.forEach(b => {
+                totalBones++;
+                if (b.types.includes('head')) headCount++;
+                if (b.types.includes('neck')) neckCount++;
+            });
+
+            log(`  Strings: ${strings.length} | Hex: ${hexOffsets.length} | Float: ${floats.length}`, 'info');
+            log(`  Bone khớp: ${boneMatches.length}`, boneMatches.length > 0 ? 'success' : 'warning');
+
+            filesData.push({
+                name: file.name,
+                path: file.webkitRelativePath || file.name,
+                size: file.size,
+                buffer: buf,
+                strings, hexOffsets, floats, boneMatches
+            });
+
+        } catch (err) {
+            log(`  LỖI: ${err.message}`, 'error');
+        }
+    }
+
+    document.getElementById('totalFiles').textContent = filesData.length;
+    document.getElementById('totalBones').textContent = totalBones;
+    document.getElementById('totalOffset').textContent = totalOffset;
+    document.getElementById('headCount').textContent = headCount;
+    document.getElementById('neckCount').textContent = neckCount;
+    document.getElementById('editedCount').textContent = Object.keys(editedFiles).length;
+
+    log(`\n=== TỔNG KẾT ===`, 'bone');
+    log(`Bone khớp: ${totalBones} | HEAD: ${headCount} | NECK: ${neckCount}`, 'success');
+    log(`\n▶ Tab TÂM GHIM: chỉnh bone | Tab PLIST: tạo file cấu hình FF`, 'plist');
+
+    allData = { filesData };
+    renderTab(allData);
+    showToast('Check xong! ' + totalBones + ' bone', 'save');
+}
+
+function renderTab(data) {
+    output.innerHTML = '';
+    const { filesData } = data;
+
+    if (currentTab === 'alloffset') { renderAllOffset(filesData); return; }
+    if (currentTab === 'ghim') { renderGhim(filesData); return; }
+    if (currentTab === 'plist') { renderPlist(); return; }
+    if (currentTab === 'edited') { renderEdited(); return; }
+
+    const boneNames = {
+        head:'Đầu - headshot', neck:'Cổ - neck aim', chest:'Ngực - chest',
+        spine:'Lưng - spine', hip:'Hông - hip', arm:'Tay - arm',
+        leg:'Chân - leg', hand:'Bàn tay - hand', foot:'Bàn chân - foot'
+    };
+
+    log('╔══════════════════════════════════════════════════════╗', 'bone');
+    log(`║   BONE ${currentTab.toUpperCase()} - ${boneNames[currentTab]}`, 'bone');
+    log('╚══════════════════════════════════════════════════════╝', 'bone');
+
+    let total = 0;
+    filesData.forEach(fd => {
+        const items = fd.boneMatches.filter(m => m.types.includes(currentTab));
+        if (items.length === 0) return;
+        log(`┌─ FILE: ${fd.path}`, 'header');
+        log(`│  Bone ${currentTab.toUpperCase()}: ${items.length} vị trí`, 'info');
+        items.slice(0, 50).forEach((item, idx) => {
+            log(`├─ [${idx+1}] 0x${item.offset.toString(16).toUpperCase()}`, 'line-num');
+            log(`│  STRING: "${item.value}"`, 'str');
+        });
+        if (items.length > 50) log(`│  ... +${items.length-50}`, 'warning');
+        log(`└─────────────────────────────────────────────`, 'header');
+        total += items.length;
+    });
+
+    if (total === 0) log(`Không tìm thấy bone ${currentTab.toUpperCase()}.`, 'warning');
+    else log(`\n=== TỔNG: ${total} ===`, 'bone');
+}
+
+function renderAllOffset(filesData) {
+    log('╔══════════════════════════════════════════════════════╗', 'ff');
+    log('║   TOÀN BỘ OFFSET                                     ║', 'ff');
+    log('╚══════════════════════════════════════════════════════╝', 'ff');
+
+    let totalHex = 0, totalFloat = 0, totalString = 0, totalBone = 0;
+
+    filesData.forEach(fd => {
+        log(`┌─ FILE: ${fd.path}`, 'header');
+        log(`│  Size: ${(fd.size/1024).toFixed(1)} KB`, 'info');
+        log(`│  Hex: ${fd.hexOffsets.length} | Float: ${fd.floats.length} | Strings: ${fd.strings.length} | Bone: ${fd.boneMatches.length}`, 'info');
+        log(`│  ▶ 20 HEX ĐẦU:`, 'hex');
+        fd.hexOffsets.slice(0, 20).forEach((h, i) => {
+            log(`│    [${i+1}] 0x${h.offset.toString(16).toUpperCase()} → ${h.value}`, 'hex');
+        });
+        if (fd.hexOffsets.length > 20) log(`│    ... +${fd.hexOffsets.length-20}`, 'warning');
+        log(`│  ▶ 20 STRING ĐẦU:`, 'str');
+        fd.strings.slice(0, 20).forEach((s, i) => {
+            log(`│    [${i+1}] 0x${s.offset.toString(16).toUpperCase()} → "${s.value}"`, 'str');
+        });
+        if (fd.strings.length > 20) log(`│    ... +${fd.strings.length-20}`, 'warning');
+        log(`└─────────────────────────────────────────────`, 'header');
+        totalHex += fd.hexOffsets.length;
+        totalFloat += fd.floats.length;
+        totalString += fd.strings.length;
+        totalBone += fd.boneMatches.length;
+    });
+
+    log(`\n=== TỔNG ===`, 'ff');
+    log(`Hex: ${totalHex} | Float: ${totalFloat} | Strings: ${totalString} | Bone: ${totalBone}`, 'success');
+}
+
+function renderGhim(filesData) {
+    log('╔══════════════════════════════════════════════════════╗', 'ghim');
+    log('║   TÂM GHIM CỔ / ĐẦU                                  ║', 'ghim');
+    log('╚══════════════════════════════════════════════════════╝', 'ghim');
+    log(`[TÂM GHIM] ${currentGhim.toUpperCase()}`, 'ghim');
+    log(`[TỌA ĐỘ] X=${ghimPresets[currentGhim].x} Y=${ghimPresets[currentGhim].y} Z=${ghimPresets[currentGhim].z}`, 'new-val');
+    log(`[HEX FLOAT32] ${ghimPresets[currentGhim].hex}`, 'hex');
+    log('', 'info');
+    log('▶ QUY TRÌNH:', 'header');
+    log('1. Chọn tâm ghim (ĐẦU / CỔ / NGỰC / BODY)', 'info');
+    log('2. Nhập OFFSET HEX cần sửa', 'info');
+    log('3. Nhập giá trị HEX mới', 'info');
+    log('4. Nhấn "⚡ ÁP DỤNG VÀO FILE"', 'info');
+    log('5. Nhấn "💾 LƯU FILE" hoặc "📦 TẢI ZIP"', 'info');
+    log('', 'info');
+
+    let count = 0;
+    filesData.forEach(fd => {
+        const items = fd.boneMatches.filter(m => m.types.includes(currentGhim));
+        if (items.length === 0) return;
+        log(`┌─ FILE: ${fd.path}`, 'header');
+        items.slice(0, 20).forEach((item, idx) => {
+            log(`├─ [${idx+1}] 0x${item.offset.toString(16).toUpperCase()} → "${item.value}"`, 'line-num');
+            const nearHex = fd.hexOffsets.filter(h => Math.abs(h.offset - item.offset) < 200).slice(0, 3);
+            nearHex.forEach(h => {
+                log(`│    HEX: ${h.value} tại 0x${h.offset.toString(16).toUpperCase()}`, 'hex');
+            });
+            count++;
+        });
+        log(`└─────────────────────────────────────────────`, 'header');
+    });
+    if (count === 0) log(`Không tìm thấy bone ${currentGhim.toUpperCase()}.`, 'warning');
+    else log(`\nTìm thấy ${count} vị trí.`, 'success');
+}
+
+function renderPlist() {
+    log('╔══════════════════════════════════════════════════════╗', 'plist');
+    log('║   TẠO FILE PLIST / MOBILECONFIG CHO FREE FIRE       ║', 'plist');
+    log('╚══════════════════════════════════════════════════════╝', 'plist');
+    log('', 'info');
+    log('▶ CẤU HÌNH HIỆN TẠI:', 'header');
+    log(`  Tên profile: ${document.getElementById('plistName').value}`, 'info');
+    log(`  Bundle ID: ${document.getElementById('plistBundle').value}`, 'info');
+    log(`  Loại file: ${document.getElementById('plistType').value}`, 'info');
+    log(`  Tâm ghim: ${currentPlistGhim.toUpperCase()} - ${ghimPresets[currentPlistGhim].desc}`, 'plist');
+    log(`  Mức aim: ${document.getElementById('plistAimLv').value}`, 'info');
+    log(`  Drag speed: ${document.getElementById('plistDrag').value}`, 'info');
+    log(`  Smooth: ${document.getElementById('plistSmooth').value}`, 'info');
+    log(`  FOV: ${document.getElementById('plistFov').value}`, 'info');
+    log('', 'info');
+    log('▶ CÁC NÚT CHỨC NĂNG:', 'header');
+    log('  📄 TẠO PLIST — tạo file .plist', 'plist');
+    log('  📱 TẠO MOBILECONFIG — tạo file .mobileconfig (iOS profile)', 'plist');
+    log('  📦 TẠO CẢ 2 — tạo cả plist và mobileconfig', 'plist');
+    log('  ⚡ HƯỚNG DẪN CÀI — xem cách cài profile vào máy', 'plist');
+    log('', 'info');
+    log('▶ LƯU Ý:', 'header');
+    log('  • Plist/Mobileconfig là file CẤU HÌNH, không phải file game', 'warning');
+    log('  • File mobileconfig cài được vào iOS Settings profile', 'warning');
+    log('  • File plist dùng cho tool đọc config, không phải offset game', 'warning');
+    log('  • Không có tác dụng bypass hay can thiệp game FF', 'error');
+}
+
+function renderEdited() {
+    log('╔══════════════════════════════════════════════════════╗', 'save');
+    log('║   DANH SÁCH FILE ĐÃ SỬA                              ║', 'save');
+    log('╚══════════════════════════════════════════════════════╝', 'save');
+    const names = Object.keys(editedFiles);
+    if (names.length === 0) {
+        log('Chưa sửa file nào.', 'warning');
+        return;
+    }
+    names.forEach((n, i) => {
+        log(`[${i+1}] ${n} (${editedFiles[n].length} bytes)`, 'success');
+    });
+    log(`\nTổng: ${names.length} file đã sửa`, 'success');
+}
+
+// ===== ÁP DỤNG GHIM =====
+document.getElementById('applyGhimBtn').addEventListener('click', () => {
+    if (!allData) { showToast('Chưa check file!', 'error'); return; }
+
+    const offsetStr = document.getElementById('ghimOffset').value.trim();
+    const hexValue = document.getElementById('ghimValueHex').value.trim();
+    const note = document.getElementById('ghimNote').value.trim();
+
+    if (!offsetStr || !hexValue) {
+        showToast('Nhập OFFSET và HEX!', 'error');
+        return;
+    }
+
+    const offset = parseInt(offsetStr, 16);
+    if (isNaN(offset) || offset < 0) {
+        showToast('Offset không hợp lệ!', 'error');
+        return;
+    }
+
+    const hexClean = hexValue.replace(/\s+/g, '');
+    if (hexClean.length % 2 !== 0) {
+        showToast('HEX phải chẵn ký tự!', 'error');
+        return;
+    }
+    const bytes = [];
+    for (let i = 0; i < hexClean.length; i += 2) {
+        const b = parseInt(hexClean.substr(i, 2), 16);
+        if (isNaN(b)) { showToast('HEX không hợp lệ!', 'error'); return; }
+        bytes.push(b);
+    }
+
+    let applied = 0;
+    allData.filesData.forEach(fd => {
+        if (offset + bytes.length > fd.buffer.length) return;
+        const newBuf = new Uint8Array(fd.buffer);
+        for (let i = 0; i < bytes.length; i++) {
+            newBuf[offset + i] = bytes[i];
+        }
+        editedFiles[fd.name] = newBuf;
+        applied++;
+        log(`\n[ĐÃ SỬA] ${fd.name}`, 'success');
+        log(`  Offset: ${offsetStr}`, 'hex');
+        log(`  Bytes mới: ${bytes.map(b => b.toString(16).padStart(2,'0').toUpperCase()).join(' ')}`, 'new-val');
+    });
+
+    if (applied > 0) {
+        saveBtn.disabled = false;
+        saveRow.style.display = 'grid';
+        document.getElementById('editedCount').textContent = Object.keys(editedFiles).length;
+        log(`\n▶ ÁP DỤNG THÀNH CÔNG ${applied} FILE`, 'ghim');
+        renderFileList();
+        showToast('Đã áp dụng! Nhấn LƯU FILE', 'save');
+    } else {
+        showToast('Offset vượt kích thước file!', 'error');
+    }
+});
+
+// ===== LƯU FILE =====
+saveBtn.addEventListener('click', () => {
+    if (Object.keys(editedFiles).length === 0) { showToast('Chưa có file!', 'error'); return; }
+    downloadAllFiles();
+});
+document.getElementById('saveAllBtn').addEventListener('click', () => {
+    if (Object.keys(editedFiles).length === 0) { showToast('Chưa có file!', 'error'); return; }
+    downloadAllFiles();
+});
+
+async function downloadAllFiles() {
+    const names = Object.keys(editedFiles);
+    log('\n=== LƯU FILE ===', 'save');
+    for (let i = 0; i < names.length; i++) {
+        const name = names[i];
+        const buf = editedFiles[name];
+        const dotIdx = name.lastIndexOf('.');
+        const newName = dotIdx > 0
+            ? name.substring(0, dotIdx) + '_edited' + name.substring(dotIdx)
+            : name + '_edited';
+        const blob = new Blob([buf], { type: 'application/octet-stream' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = newName;
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1000);
+        log(`  [${i+1}/${names.length}] 💾 ${newName}`, 'success');
+        await new Promise(r => setTimeout(r, 800));
+    }
+    log(`\n▶ HOÀN TẤT ${names.length} FILE`, 'save');
+    showToast('Đã lưu ' + names.length + ' file!', 'save');
+}
+
+// ===== TẢI ZIP =====
+document.getElementById('zipAllBtn').addEventListener('click', () => {
+    const names = Object.keys(editedFiles);
+    if (names.length === 0) { showToast('Chưa có file!', 'error'); return; }
+
+    const zipParts = [];
+    const centralDir = [];
+    let offset = 0;
+
+    for (const name of names) {
+        const buf = editedFiles[name];
+        const fileNameBytes = new TextEncoder().encode(name);
+        const localHeader = new Uint8Array(30 + fileNameBytes.length);
+        const lv = new DataView(localHeader.buffer);
+        lv.setUint32(0, 0x04034b50, true);
+        lv.setUint16(4, 20, true);
+        lv.setUint16(6, 0, true);
+        lv.setUint16(8, 0, true);
+        lv.setUint16(10, 0, true);
+        lv.setUint16(12, 0, true);
+        lv.setUint32(14, crc32(buf), true);
+        lv.setUint32(18, buf.length, true);
+        lv.setUint32(22, buf.length, true);
+        lv.setUint16(26, fileNameBytes.length, true);
+        lv.setUint16(28, 0, true);
+        localHeader.set(fileNameBytes, 30);
+        zipParts.push(localHeader);
+        zipParts.push(buf);
+
+        const cd = new Uint8Array(46 + fileNameBytes.length);
+        const cv = new DataView(cd.buffer);
+        cv.setUint32(0, 0x02014b50, true);
+        cv.setUint16(4, 20, true);
+        cv.setUint16(6, 20, true);
+        cv.setUint16(8, 0, true);
+        cv.setUint16(10, 0, true);
+        cv.setUint16(12, 0, true);
+        cv.setUint16(14, 0, true);
+        cv.setUint32(16, crc32(buf), true);
+        cv.setUint32(20, buf.length, true);
+        cv.setUint32(24, buf.length, true);
+        cv.setUint16(28, fileNameBytes.length, true);
+        cv.setUint16(30, 0, true);
+        cv.setUint16(32, 0, true);
+        cv.setUint16(34, 0, true);
+        cv.setUint16(36, 0, true);
+        cv.setUint32(38, 0, true);
+        cv.setUint32(42, offset, true);
+        cd.set(fileNameBytes, 46);
+        centralDir.push(cd);
+        offset += localHeader.length + buf.length;
+    }
+
+    const cdSize = centralDir.reduce((a, b) => a + b.length, 0);
+    const eocd = new Uint8Array(22);
+    const ev = new DataView(eocd.buffer);
+    ev.setUint32(0, 0x06054b50, true);
+    ev.setUint16(4, 0, true);
+    ev.setUint16(6, 0, true);
+    ev.setUint16(8, names.length, true);
+    ev.setUint16(10, names.length, true);
+    ev.setUint32(12, cdSize, true);
+    ev.setUint32(16, offset, true);
+    ev.setUint16(20, 0, true);
+
+    const totalSize = zipParts.reduce((a, b) => a + b.length, 0) + cdSize + eocd.length;
+    const zipBuf = new Uint8Array(totalSize);
+    let pos = 0;
+    for (const part of zipParts) { zipBuf.set(part, pos); pos += part.length; }
+    for (const cd of centralDir) { zipBuf.set(cd, pos); pos += cd.length; }
+    zipBuf.set(eocd, pos);
+
+    const blob = new Blob([zipBuf], { type: 'application/zip' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'FF_Bone_Edited_' + Date.now() + '.zip';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1000);
+    showToast('Tải ZIP thành công!', 'save');
+});
+
+// ===== TẠO PLIST =====
+document.getElementById('genPlistBtn').addEventListener('click', () => generatePlist('plist'));
+document.getElementById('genMobileBtn').addEventListener('click', () => generatePlist('mobileconfig'));
+document.getElementById('genBothBtn').addEventListener('click', () => {
+    generatePlist('plist');
+    setTimeout(() => generatePlist('mobileconfig'), 800);
+});
+
+function generatePlist(type) {
+    const name = document.getElementById('plistName').value;
+    const bundle = document.getElementById('plistBundle').value;
+    const aimLv = document.getElementById('plistAimLv').value;
+    const drag = document.getElementById('plistDrag').value;
+    const smooth = document.getElementById('plistSmooth').value;
+    const fov = document.getElementById('plistFov').value;
+    const ghim = ghimPresets[currentPlistGhim];
+    const aim = aimLevels[aimLv];
+    const uuid = generateUUID();
+    const now = new Date().toISOString();
+
+    if (type === 'plist') {
+        const plist = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>ProfileName</key>
+    <string>${escapeXml(name)}</string>
+    <key>BundleIdentifier</key>
+    <string>${escapeXml(bundle)}</string>
+    <key>CreationDate</key>
+    <string>${now}</string>
+    <key>UUID</key>
+    <string>${uuid}</string>
+    <key>GameConfig</key>
+    <dict>
+        <key>Game</key>
+        <string>Free Fire</string>
+        <key>PackageName</key>
+        <string>com.dts.freefireth</string>
+        <key>AimConfig</key>
+        <dict>
+            <key>AimType</key>
+            <string>${currentPlistGhim.toUpperCase()}</string>
+            <key>AimDescription</key>
+            <string>${escapeXml(ghim.desc)}</string>
+            <key>AimX</key>
+            <real>${ghim.x}</real>
+            <key>AimY</key>
+            <real>${ghim.y}</real>
+            <key>AimZ</key>
+            <real>${ghim.z}</real>
+            <key>AimHexFloat</key>
+            <string>${ghim.hex}</string>
+        </dict>
+        <key>ControlConfig</key>
+        <dict>
+            <key>AimSpeed</key>
+            <real>${aim.aimSpeed}</real>
+            <key>Smooth</key>
+            <real>${aim.smooth}</real>
+            <key>FOV</key>
+            <integer>${aim.fov}</integer>
+            <key>DragSpeed</key>
+            <real>${aim.drag}</real>
+            <key>Recoil</key>
+            <real>${aim.recoil}</real>
+            <key>UserSmooth</key>
+            <real>${smooth}</real>
+            <key>UserDrag</key>
+            <real>${drag}</real>
+            <key>UserFOV</key>
+            <integer>${fov}</integer>
+        </dict>
+        <key>GhimConfig</key>
+        <dict>
+            <key>GhimType</key>
+            <string>${currentPlistGhim.toUpperCase()}</string>
+            <key>GhimX</key>
+            <real>${ghim.x}</real>
+            <key>GhimY</key>
+            <real>${ghim.y}</real>
+            <key>GhimZ</key>
+            <real>${ghim.z}</real>
+        </dict>
+        <key>Level</key>
+        <string>${aimLv}</string>
+        <key>CreatedBy</key>
+        <string>Đức Thịnh VN</string>
+        <key>Version</key>
+        <string>5.0</string>
+    </dict>
+</dict>
+</plist>`;
+
+        downloadFile(plist, 'FF_Config_' + sanitize(name) + '.plist', 'application/x-plist');
+        log(`\n📄 ĐÃ TẠO PLIST: FF_Config_${sanitize(name)}.plist`, 'plist');
+        showToast('Tạo PLIST thành công!', 'plist');
+    } else {
+        // Mobileconfig (iOS profile)
+        const payloadUUID = generateUUID();
+        const profileUUID = generateUUID();
+
+        const mobileconfig = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>PayloadContent</key>
+    <array>
+        <dict>
+            <key>PayloadType</key>
+            <string>com.dts.freefireth.config</string>
+            <key>PayloadIdentifier</key>
+            <string>${bundle}.config.${payloadUUID}</string>
+            <key>PayloadUUID</key>
+            <string>${payloadUUID}</string>
+            <key>PayloadVersion</key>
+            <integer>1</integer>
+            <key>PayloadDisplayName</key>
+            <string>${escapeXml(name)} - Config</string>
+            <key>PayloadDescription</key>
+            <string>Cấu hình AIM/DRAG cho Free Fire - Tạo bởi Đức Thịnh VN</string>
+            <key>PayloadOrganization</key>
+            <string>Đức Thịnh VN</string>
+            <key>GameBundleID</key>
+            <string>com.dts.freefireth</string>
+            <key>AimConfig</key>
+            <dict>
+                <key>AimType</key>
+                <string>${currentPlistGhim.toUpperCase()}</string>
+                <key>AimX</key>
+                <real>${ghim.x}</real>
+                <key>AimY</key>
+                <real>${ghim.y}</real>
+                <key>AimZ</key>
+                <real>${ghim.z}</real>
+                <key>AimHexFloat</key>
+                <string>${ghim.hex}</string>
+            </dict>
+            <key>ControlConfig</key>
+            <dict>
+                <key>AimSpeed</key>
+                <real>${aim.aimSpeed}</real>
+                <key>Smooth</key>
+                <real>${aim.smooth}</real>
+                <key>FOV</key>
+                <integer>${aim.fov}</integer>
+                <key>DragSpeed</key>
+                <real>${aim.drag}</real>
+                <key>Recoil</key>
+                <real>${aim.recoil}</real>
+            </dict>
+            <key>Level</key>
+            <string>${aimLv}</string>
+            <key>CreatedBy</key>
+            <string>Đức Thịnh VN</string>
+            <key>Version</key>
+            <string>5.0</string>
+        </dict>
+    </array>
+    <key>PayloadDisplayName</key>
+    <string>${escapeXml(name)}</string>
+    <key>PayloadIdentifier</key>
+    <string>${bundle}.profile.${profileUUID}</string>
+    <key>PayloadUUID</key>
+    <string>${profileUUID}</string>
+    <key>PayloadVersion</key>
+    <integer>1</integer>
+    <key>PayloadType</key>
+    <string>Configuration</string>
+    <key>PayloadDescription</key>
+    <string>Profile cấu hình Free Fire - Đức Thịnh VN</string>
+    <key>PayloadOrganization</key>
+    <string>Đức Thịnh VN</string>
+    <key>PayloadRemovalDisallowed</key>
+    <false/>
+    <key>ConsentText</key>
+    <dict>
+        <key>default</key>
+        <string>Profile này chứa cấu hình AIM cho Free Fire. Cài đặt bằng cách nhấn Install.</string>
+    </dict>
+</dict>
+</plist>`;
+
+        downloadFile(mobileconfig, 'FF_Profile_' + sanitize(name) + '.mobileconfig', 'application/x-apple-aspen-config');
+        log(`\n📱 ĐÃ TẠO MOBILECONFIG: FF_Profile_${sanitize(name)}.mobileconfig`, 'plist');
+        showToast('Tạo MOBILECONFIG thành công!', 'plist');
+    }
+}
+
+// ===== HƯỚNG DẪN CÀI =====
+document.getElementById('installProfileBtn').addEventListener('click', () => {
+    log('\n╔══════════════════════════════════════════════════════╗', 'plist');
+    log('║   HƯỚNG DẪN CÀI PROFILE PLIST / MOBILECONFIG       ║', 'plist');
+    log('╚══════════════════════════════════════════════════════╝', 'plist');
+    log('', 'info');
+    log('═══ iOS (iPhone/iPad) ═══', 'header');
+    log('1. Tải file .mobileconfig về máy', 'info');
+    log('2. Mở app Files → tìm file .mobileconfig vừa tải', 'info');
+    log('3. Nhấn vào file → iOS sẽ mở màn hình cài đặt Profile', 'info');
+    log('4. Nhấn "Install" → nhập mật khẩu máy → nhấn "Install" lần nữa', 'info');
+    log('5. Vào Settings → General → VPN & Device Management để kiểm tra', 'info');
+    log('', 'info');
+    log('═══ Android ═══', 'header');
+    log('1. Tải file .plist về máy', 'info');
+    log('2. Mở app quản lý file → tìm file .plist', 'info');
+    log('3. Copy file vào thư mục config của tool mod (nếu có)', 'info');
+    log('4. Hoặc import vào app hỗ trợ đọc plist', 'info');
+    log('', 'info');
+    log('═══ CẢNH BÁO ═══', 'error');
+    log('• File plist/mobileconfig này chỉ là CẤU HÌNH', 'warning');
+    log('• KHÔNG phải file game hay file offset', 'warning');
+    log('• KHÔNG bypass được anti-cheat Free Fire', 'warning');
+    log('• KHÔNG can thiệp vào quá trình chơi game', 'warning');
+    log('• Chỉ dùng để tham khảo cấu hình aim khi tự code tool', 'info');
+    log('', 'info');
+});
+
+// ===== HÀM PHỤ =====
+function generateUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    }).toUpperCase();
+}
+
+function sanitize(s) {
+    return s.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 30);
+}
+
+function escapeXml(s) {
+    return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+}
+
+function downloadFile(content, filename, mime) {
+    const blob = new Blob([content], { type: mime + ';charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1000);
+}
+
+// ===== CRC32 =====
+function crc32(buf) {
+    let crc = 0xFFFFFFFF;
+    for (let i = 0; i < buf.length; i++) {
+        crc ^= buf[i];
+        for (let j = 0; j < 8; j++) {
+            crc = (crc >>> 1) ^ (0xEDB88320 & -(crc & 1));
+        }
+    }
+    return (crc ^ 0xFFFFFFFF) >>> 0;
+}
+
+checkBtn.addEventListener('click', processFiles);
+</script>
+</body>
+</html>
